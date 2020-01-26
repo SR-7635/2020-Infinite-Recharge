@@ -29,24 +29,22 @@ jobs:
             cd $HOME
             local rawURL="https://api.github.com/repos/$1/$2/releases/latest"
             local URL="$(curl --silent "${rawURL}" | grep 'browser_download_url' | grep 'pmd-bin' | tr -d '"' | tr -d ' ' | sed -e 's/browser_download_url://')"
-            echo "Downloading ${URL##*\/}"
-            curl -# -L -O "${URL}" || networkErr
+            curl -# -L -O "${URL}" >/dev/null 2>&1 || networkErr
         }
 
         # Install PMD
         function Install() {
             cd $HOME
-            unzip "*.zip"
-            rm -rf pmd-bin*.zip
+            unzip "*.zip" >/dev/null 2>&1
+            rm -rf pmd-bin*.zip >/dev/null 2>&1
             MatchDir="$(cd "$(dirname $HOME/pmd-bin*)"; pwd -P)/$(basename $HOME/pmd-bin*)"
-            alias pmd=${MatchDir}/bin/run.sh pmd
             mkdir rulesets
             cd rulesets
             mkdir java
             cd java
-            curl -# -L -O https://raw.githubusercontent.com/jborgers/PMD-jPinpoint-rules/master/rulesets/java/jpinpoint-rules.xml
+            curl -# -L -O https://raw.githubusercontent.com/jborgers/PMD-jPinpoint-rules/master/rulesets/java/jpinpoint-rules.xml >/dev/null 2>&1
             cd $HOME
-            pmd -d $RepoPath -R rulesets/java/jpinpoint-rules.xml -f text
+            ${MatchDir}/bin/run.sh pmd -d $RepoPath -R rulesets/java/jpinpoint-rules.xml -f text
         }
 
         function main() {
