@@ -1,0 +1,54 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Check Java
+      run: |
+        #!/bin/bash
+
+        # Created by Bat.bat(williambj1) on Jan 26, 2020
+
+        # Repo Path
+        RepoPath="$(cd "$(dirname "$1")"; pwd -P)/$(basename "$1")"
+
+        # Exit on Network Issue
+        function networkErr() {
+            echo "[ ERROR ]: Failed to download resources from ${URL}, please check your connection!"
+            exit 1
+        }
+
+        # Download GitHub Release
+        function DGR() {
+
+            local rawURL="https://api.github.com/repos/$1/$2/releases/latest"
+            local URL="$(curl --silent "${rawURL}" | grep 'browser_download_url' | grep 'pmd-bin' | tr -d '"' | tr -d ' ' | sed -e 's/browser_download_url://')"
+            echo "Downloading ${URL##*\/}"
+            curl -# -L -O "${URL}" || networkErr
+        }
+
+        # Install PMD
+        function Install() {
+            cd $HOME
+            unzip pmd-bin*.zip
+            rm -rf pmd-bin.zip
+            MatchDir="$(cd "$(dirname $HOME/pmd-bin*)"; pwd -P)/$(basename $HOME/pmd-bin*)"
+            alias pmd=${MatchDir}/bin/run.sh pmd
+            mkdir $HOME/rulesets/java && cd $HOME/rulesets/java
+            curl -# -L -O https://raw.githubusercontent.com/jborgers/PMD-jPinpoint-rules/master/rulesets/java/jpinpoint-rules.xml
+            cd -
+            pmd -d $RepoPath -R rulesets/java/jpinpoint-rules.xml -f text
+        }
+
+        function main() {
+            DGR pmd pmd
+            Install
+        }
+        main
+
