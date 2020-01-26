@@ -41,7 +41,6 @@ jobs:
         }
 
         function main() {
-            DGR pmd pmd
             Install
         }
         main
