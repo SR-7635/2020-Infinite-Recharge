@@ -35,12 +35,11 @@ jobs:
             cd rulesets
             mkdir java
             cd java
-            curl -#OL https://raw.githubusercontent.com/jborgers/PMD-jPinpoint-rules/master/rulesets/java/jpinpoint-rules.xml >/dev/null 2>&1
             cd $HOME
             echo ""
             echo '=========== Lint Check ============'
             echo ""
-            ${MatchDir}/bin/run.sh pmd -d $RepoPath -no-cache -R rulesets/java/jpinpoint-rules.xml -f text
+            ${MatchDir}/bin/run.sh pmd -d $RepoPath -no-cache -R $RepoPath/.github/jpinpoint-rules.xml -f text
             echo ""
             echo '========== End Check =============='
         }
