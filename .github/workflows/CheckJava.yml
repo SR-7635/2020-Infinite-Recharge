@@ -27,7 +27,7 @@ jobs:
         # Install PMD
         function Install() {
             cd $HOME
-            curl -#OL https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.21.0/pmd-bin-6.21.0.zip
+            curl -#OL https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.21.0/pmd-bin-6.21.0.zip >/dev/null 2>&1
             unzip "*.zip" >/dev/null 2>&1
             rm -rf pmd-bin*.zip >/dev/null 2>&1
             MatchDir="$(cd "$(dirname $HOME/pmd-bin*)"; pwd -P)/$(basename $HOME/pmd-bin*)"
@@ -37,7 +37,12 @@ jobs:
             cd java
             curl -#OL https://raw.githubusercontent.com/jborgers/PMD-jPinpoint-rules/master/rulesets/java/jpinpoint-rules.xml >/dev/null 2>&1
             cd $HOME
-            ${MatchDir}/bin/run.sh pmd -d $RepoPath -R rulesets/java/jpinpoint-rules.xml -f text
+            echo ""
+            echo '=========== Lint Check ============'
+            echo ""
+            ${MatchDir}/bin/run.sh pmd -d $RepoPath -no-cache -R rulesets/java/jpinpoint-rules.xml -f text
+            echo ""
+            echo '========== End Check =============='
         }
 
         function main() {
