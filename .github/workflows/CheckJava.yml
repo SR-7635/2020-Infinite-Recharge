@@ -36,7 +36,7 @@ jobs:
         # Install PMD
         function Install() {
             cd $HOME
-            unzip pmd-bin*.zip
+            unzip 'pmd-bin*.zip'
             rm -rf pmd-bin.zip
             MatchDir="$(cd "$(dirname $HOME/pmd-bin*)"; pwd -P)/$(basename $HOME/pmd-bin*)"
             alias pmd=${MatchDir}/bin/run.sh pmd
